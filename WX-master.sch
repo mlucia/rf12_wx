@@ -1,0 +1,1 @@
+../../eagle/Arduino-WX-master/WX-master.sch
