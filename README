@@ -1,6 +1,55 @@
-The weather remote with wind speed/direction, tempurature and humidity (SHT11)
+Wireless arduino weather system with web server. Based upon the work of several people, most notably Jean-Claude Wippler
+of Jee Labs (http://jeelabs.org/).
+ 
+The weather remote makes use of wind speed/direction sensor from SparkFun (http://www.sparkfun.com/products/8942),
+the tempurature and humidity sensor from Sensiron (SHT11). 
 
-http://www.sparkfun.com/products/8942
+Current remote node functionality:
 
-Solar charger and wireless RF12
+* Li battery
+* Solar charger
+* RF12B sleep between transmissions - remote updates sent once a min
+* Wind speed averaged over 12 samples taken every 5 seconds
+* Wind burst speed recorded once per min
+* Temp, humidity and dew point data provided by SHT11/15
+* Light level infered from Solar cell Voltage
+* Uses 8 MHz clock to reduce current requirements
 
+Current Master node functionality:
+
+* Web server using ENC28J60
+* DHCP
+* RTC using DS1307
+* Barometric pressure using Freescale MP3H6115A
+
+Current State is function prototype.
+
+Known issues:
+
+* Every once in a while the remote node will stop sending data. This doesn't appear to be related to the length of time
+the remote has been running, environmental conditions or any other obvious cause. This is actively under investigation.
+
+* The anemometer accuracy is questionable. I found that the reed relay outputs pretty much a square wave with 2 pulses 
+per revolution which is not noted in the documents. The documentation indicates that one revolution per sec = 1.492 MPH,
+however my initial testing (driving at set speeds on a calm day with the sensor on top of my truck) seem to indicate that
+the value from the sensor is about 10% high. I have not re-tested after I noticed (and solved I hope) the contact bounce
+problem of the reed relay.
+
+* The Wind vane also has quite large granularity and the response from the 8 reed relays is non-linear when it comes to the
+interpolated 22.5% points where two reeds are closed at the same time.
+
+* The barometric sensor is analog and was designed for a larger pressure range than atmospheric, thus the accuracy is less 
+than desirable.
+
+
+Suggested Improvements:
+
+* Replace or improve the Wind Sensor - I tried replacing the wind vane sensor board with a magentic position sensor but 
+found that the magnet used either isn't close enough to activate the rotory encoder 
+(AS5043  - http://www.austriamicrosystems.com/Products/Magnetic-Encoders/Rotary-Encoders/AS5043) 
+
+* Replace the baro sensor with BMP085, or add an opamp to adjust the scale of the analog signal
+
+* Add a new remote type (device id 2) which will capture data from the rain guage
+
+* Push wx data to pachube (api.pachube.com)
